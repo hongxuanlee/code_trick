@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+    <title>Talk is cheap</title>
+    <style>
+        .container{
+           font-size: 35px; 
+           text-align: center; 
+           margin-top: 30px; 
+        }
+        .title{
+            margin-right: 15px; 
+            vertical-align: bottom; 
+            line-height: 40px;
+        }
+        input{
+            width: 400px; 
+            height: 35px
+        }
+        button{
+            width: 80px;
+            height:40px;
+            font-size: 20px;
+            border-radius: 10px
+        }
+        .result{
+            width: 600px;
+            margin: 30px auto;
+            line-height: 32px;
+        }
+        .spinner {
+          width: 40px;
+          height: 40px;
+          background-color: #333;
+
+          margin: 100px auto;
+          -webkit-animation: sk-rotateplane 1.2s infinite ease-in-out;
+          animation: sk-rotateplane 1.2s infinite ease-in-out;
+        }
+
+        @-webkit-keyframes sk-rotateplane {
+          0% { -webkit-transform: perspective(120px) }
+          50% { -webkit-transform: perspective(120px) rotateY(180deg) }
+          100% { -webkit-transform: perspective(120px) rotateY(180deg)  rotateX(180deg) }
+        }
+
+        @keyframes sk-rotateplane {
+          0% { 
+            transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+            -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg) 
+          } 50% { 
+            transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+            -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg) 
+          } 100% { 
+            transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+            -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+          }
+        }
+        img{
+          width: 350px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+  <label class="title">code link:</label><input id="link" type="text">
+  <button id="submit">submit</button>
+</div>
+<div class="result">
+   Talk is cheap, show me your code! <br/>
+   请输入你的代码地址，支持gitlab和github的单个文件。  <br/>
+   eg: https://github.com/koajs/koa/blob/master/lib/request.js 
+</div>
+
+<script>
+    document.querySelector('#submit').addEventListener('click', (e) => {
+      let link = document.querySelector('#link').value;
+      let url = '/?q=data&address=' + link;
+      document.querySelector('.result').innerHTML = '<div class="spinner"></div>';
+      fetch(url, {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Cache': 'no-cache'
+          },
+          credentials: 'include'
+      }).then(response => {
+       return response.json();
+      }).then(res => {
+        document.querySelector('.result').innerHTML = `<p>${res.message}</p><img src="${res.img}" alt="">`;
+     }).catch(e => {
+        document.querySelector('.result').innerHTML = 'request error!'
+     });
+    });
+</script>
+</body>
+</html>
